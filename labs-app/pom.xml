@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hulk</groupId>
+    <groupId>com.example</groupId>
     <artifactId>labs-app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>labs-app</name>
@@ -18,7 +18,12 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21-ea+17</version>
+            <version>19.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>19.0.2</version>
         </dependency>
 
         <dependency>
@@ -55,7 +60,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.hulk.labsapp/com.hulk.labsapp.HelloApplication</mainClass>
+                            <mainClass>com.example.labsapp/com.example.labsapp.HelloApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
