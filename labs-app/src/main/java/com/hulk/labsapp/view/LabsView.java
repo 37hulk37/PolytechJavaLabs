@@ -66,8 +66,6 @@ public class LabsView implements View {
                     if ( !commands.contains(input.get(i)) ) {
                         Collections.swap(input, i, endIdx-1);
                         endIdx--;
-                    } else {
-
                     }
                 }
 
