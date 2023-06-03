@@ -9,14 +9,13 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class LabsView implements View {
     private final LabsController labsController;
     private final ObservableList<String> inputList;
     private int startIdx = 0;
+    private int endIdx = 0;
     private final Set<String> commands;
 
     public LabsView(LabsController labsController) {
@@ -55,21 +54,28 @@ public class LabsView implements View {
         layout.add(outputView, 0, 3);
 
         startButton.setOnAction(event -> {
-            String[] input = inputArea
-                    .getText()
-                    .toLowerCase()
-                    .split("\n");
+            List<String> input = new ArrayList<>(Arrays.stream(inputArea
+                            .getText()
+                            .toLowerCase()
+                            .split("\n"))
+                    .toList());
 
-            if (input.length > 0) {
-                var checkedList = Arrays.stream(input)
-                        .filter(commands::contains)
-                        .toList();
+            endIdx = input.size();
+            if (input.size() > 0) {
+                for (int i = startIdx; i < input.size(); i++) {
+                    if ( !commands.contains(input.get(i)) ) {
+                        Collections.swap(input, i, endIdx-1);
+                        endIdx--;
+                    } else {
+
+                    }
+                }
 
                 inputList.addAll(
-                        checkedList.subList(startIdx, checkedList.size())
+                        input.subList(startIdx, endIdx)
                 );
 
-                startIdx = input.length;
+                startIdx = input.size();
             }
 
             labsController.startLabs(inputList);
