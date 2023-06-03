@@ -1,19 +1,27 @@
 import java.util.Random;
 
 public class AbstractProgram implements Runnable {
-    private State state = State.UNKNOWN;
-    private final static Random random = new Random();
-    private final Synchro synchro;
+    private State state;
+    private static Random random;
+    private boolean valueSet;
 
-    public AbstractProgram(Synchro queue) {
-        this.synchro = queue;
+    public AbstractProgram() {
+        this.state = State.UNKNOWN;
+        random = new Random();
+        this.valueSet = false;
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
-            while ( !synchro.isStopped() ) {
+            while (!Thread.currentThread().isInterrupted()) {
+                synchronized (this) {
+                    while (valueSet) {
+                        wait();
+                    }
+                }
                 changeState();
+                valueSet = true;
                 Thread.sleep(1000);
             }
         } catch (InterruptedException ex) {
@@ -21,11 +29,15 @@ public class AbstractProgram implements Runnable {
         }
     }
 
-    private void changeState() {
-        State[] states = State.values();
-        int next = random.nextInt(1, 4);
-        state = states[next];
+    public synchronized State getState() {
+        valueSet = false;
+        notify();
 
-        synchro.put(state);
+        return state;
+    }
+
+    private void changeState() {
+        int idx = random.nextInt(1, 4);
+        state = State.values()[idx];
     }
 }

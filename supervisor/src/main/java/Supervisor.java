@@ -1,48 +1,35 @@
 public class Supervisor implements Runnable {
-    private final Synchro synchro;
     private final AbstractProgram abstractProgram;
-    private Thread abstractThread;
+    private Thread thread;
 
-    public Supervisor(Synchro synchro) {
-        this.synchro = synchro;
-        this.abstractProgram = new AbstractProgram(synchro);
-
-        this.abstractThread = new Thread(abstractProgram, "AbstractProgram");
-        abstractThread.start();
-        System.out.println("Starting AbstractProgram");
-    }
-
-    private void stopThread() {
-        synchro.stop();
-        abstractThread.interrupt();
-    }
-
-    private void startThread() {
-        synchro.setStopped(false);
-        abstractThread = new Thread(abstractProgram, "AbstractProgram");
-        abstractThread.start();
+    public Supervisor() {
+        this.abstractProgram = new AbstractProgram();
+        this.thread = new Thread(abstractProgram, "AbstractProgram");
+        thread.start();
     }
 
     @Override
     public void run() {
         try {
-            while ( !synchro.isStopped() ) {
-                State state = synchro.get();
+            while (!thread.isInterrupted()) {
+                State state = abstractProgram.getState();
+                System.out.println(state);
 
                 switch (state) {
-                    case FATAL_ERROR ->
-                            stopThread();
+                    case FATAL_ERROR -> {
+                        thread.interrupt();
+                    }
 
                     case STOPPING -> {
-                        stopThread();
-                        startThread();
+                        thread.interrupt();
+                        thread = new Thread(abstractProgram, "AbstractProgram");
+                        thread.start();
                     }
                 }
-
                 Thread.sleep(1000);
             }
         } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            thread.interrupt();
         }
     }
 }
